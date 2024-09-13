@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">HexagonTest</string>
+    <string name="name">Nome</string>
+    <string name="birth">Data de Nascimento</string>
+    <string name="cpf">CPF</string>
+    <string name="city">Cidade</string>
+    <string name="todo">TODO</string>
+    <string name="salvar">Salvar</string>
+</resources>
