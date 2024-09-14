@@ -10,5 +10,5 @@ data class UserEntity(
     val birth: String,
     val cpf: String,
     val city: String,
-    val isActive: Boolean // Campo para indicar se o usuário está ativo
+    val isActive: Boolean
 )

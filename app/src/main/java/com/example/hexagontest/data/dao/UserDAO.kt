@@ -1,6 +1,5 @@
 package com.example.hexagontest.data.dataBase
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -12,5 +11,5 @@ interface UserDao {
     suspend fun salvar(user: UserEntity): Long
 
     @Query("SELECT * FROM user_table")
-   suspend fun getAllUsers(): LiveData<List<UserEntity>>
+    suspend fun getAllUsers(): List<UserEntity>
 }

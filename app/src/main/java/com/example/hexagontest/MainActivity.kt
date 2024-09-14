@@ -2,6 +2,8 @@ package com.example.hexagontest
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hexagontest.data.dataBase.DataBase
 import com.example.hexagontest.databinding.ActivityMainBinding
@@ -9,7 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import android.util.Log
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,44 +27,38 @@ class MainActivity : AppCompatActivity() {
         // Inicializa o banco de dados
         database = DataBase.getInstance(applicationContext)
 
-        // Busca os dados do usuário e verifica o estado do Switch
-        loadUserData()
-
         // Configura o botão para abrir AddUserActivity
         binding.btnAdd.setOnClickListener {
             val intent = Intent(this, AddUserActivity::class.java)
             startActivity(intent)
         }
+
+        // Carrega os dados dos usuários
+        loadUserData()
     }
 
     private fun loadUserData() {
         CoroutineScope(Dispatchers.IO).launch {
-            // Obtém a lista de usuários
-            val userList = database.userDao().getAllUsers()
-
-            // Log para verificar o conteúdo da lista
-            Log.d("MainActivity", "Total de usuários obtidos: ${userList.size}")
-
-            // Filtra os usuários ativos
-            val activeUsers = userList.filter { user ->
-                // Log para verificar o estado de isActive
-                Log.d("MainActivity", "Usuário: ${user.name}, Ativo: ${user.isActive}")
-                user.isActive
-            }
-
-            // Converte a lista de usuários ativos em uma única string
-            val userDataText = activeUsers.joinToString(separator = "\n") { user ->
-                "Usuário ativo: ${user.name}, ${user.birth}, ${user.cpf}, ${user.city}"
-            }
+            val userList = database.userDao().getAllUsers() // Obtém a lista de usuários
 
             withContext(Dispatchers.Main) {
-                // Atualiza o TextView com a string formatada
-                binding.textViewUserData.text = userDataText
+                // Limpa o LinearLayout antes de adicionar novas tags
+                binding.userTagsLayout.removeAllViews()
+
+                // Filtra os usuários ativos e cria tags
+                val activeUsers = userList.filter { user -> user.isActive }
+
+                // Adiciona uma tag para cada usuário ativo
+                for (user in activeUsers) {
+                    val userTagView = layoutInflater.inflate(R.layout.item_user_tag, null)
+                    val textViewUserTag = userTagView.findViewById<TextView>(R.id.textViewUserTag)
+                    textViewUserTag.text = "Usuário: ${user.name} Data de Nascimento: ${user.birth} CPF: ${user.cpf} Cidade: ${user.city}"
+                    binding.userTagsLayout.addView(userTagView)
+                }
 
                 // Log para verificar o texto atualizado
-                Log.d("MainActivity", "Texto atualizado no TextView: $userDataText")
+                Log.d("MainActivity", "Número de tags adicionadas: ${activeUsers.size}")
             }
         }
     }
-
 }
