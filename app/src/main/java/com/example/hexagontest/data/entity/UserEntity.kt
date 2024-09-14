@@ -10,5 +10,6 @@ data class UserEntity(
     val birth: String,
     val cpf: String,
     val city: String,
-    val isActive: Boolean
+    val isActive: Boolean,
+    val imageUri: String? = null
 )

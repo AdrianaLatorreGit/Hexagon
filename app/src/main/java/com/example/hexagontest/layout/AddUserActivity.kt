@@ -1,11 +1,16 @@
-package com.example.hexagontest
+package com.example.hexagontest.layout
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hexagontest.data.dataBase.DataBase
 import com.example.hexagontest.data.entity.UserEntity
 import com.example.hexagontest.databinding.ActivityAddUserBinding
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -18,6 +23,10 @@ class AddUserActivity : AppCompatActivity() {
     }
 
     private lateinit var database: DataBase
+    private var selectedImageUri: Uri? = null // Permite valor nulo e inicializa corretamente
+
+    // Launcher for the ActivityResult
+    private lateinit var pickImageLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +34,15 @@ class AddUserActivity : AppCompatActivity() {
 
         // Inicializa o banco de dados
         database = DataBase.getInstance(applicationContext)
+
+        // Inicializa o launcher para escolher a imagem
+        pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+                selectedImageUri = it
+                // Exibe a imagem selecionada no ImageButton
+                Picasso.get().load(selectedImageUri).into(binding.imageButton)
+            }
+        }
 
         // Configura o botão "Salvar"
         binding.btnSave.setOnClickListener {
@@ -43,30 +61,43 @@ class AddUserActivity : AppCompatActivity() {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // Configura o clique do ImageButton para abrir a galeria de imagens
+        binding.imageButton.setOnClickListener {
+            openImageChooser()
+        }
+    }
+
+    private fun openImageChooser() {
+        // Usa o launcher em vez de startActivityForResult
+        pickImageLauncher.launch("image/*")
     }
 
     private fun saveUser(name: String, birth: String, cpf: String, city: String, isActive: Boolean) {
-        // Cria um objeto UserEntity
         val user = UserEntity(
             name = name,
             birth = birth,
             cpf = cpf,
             city = city,
-            isActive = isActive
+            isActive = isActive,
+            imageUri = selectedImageUri?.toString() ?: ""
         )
 
-        // Insere o usuário no banco de dados utilizando coroutines
         CoroutineScope(Dispatchers.IO).launch {
             val userId = database.userDao().salvar(user)
 
             withContext(Dispatchers.Main) {
                 if (userId > 0) {
                     Toast.makeText(this@AddUserActivity, "Usuário salvo com sucesso", Toast.LENGTH_SHORT).show()
-                    finish() // Fecha a Activity após salvar
+
+                    // Envia o resultado de sucesso para a MainActivity
+                    setResult(RESULT_OK)
+                    finish() // Fecha a Activity
                 } else {
                     Toast.makeText(this@AddUserActivity, "Erro ao salvar o usuário", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
+
 }
