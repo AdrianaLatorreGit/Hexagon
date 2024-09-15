@@ -6,4 +6,6 @@
     <string name="city">Cidade</string>
     <string name="todo">TODO</string>
     <string name="salvar">Salvar</string>
+    <string name="ativo">ativo</string>
+    <string name="usuarios_inativos">Usuarios inativos</string>
 </resources>

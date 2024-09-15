@@ -34,6 +34,12 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        // Configura o botão para abrir InactiveUsersActivity
+        binding.btnInactiveUsers.setOnClickListener {
+            val intent = Intent(this, InactiveUsersActivity::class.java)
+            startActivity(intent)
+        }
+
         // Carrega os dados dos usuários ao iniciar a activity
         loadUserData()
     }
@@ -53,12 +59,8 @@ class MainActivity : AppCompatActivity() {
                 // Limpa o LinearLayout antes de adicionar novas tags
                 binding.userTagsLayout.removeAllViews()
 
-                // Filtra os usuários ativos e cria tags
-                val activeUsers = userList.filter { user -> user.isActive }
-                Log.d("MainActivity", "Número de usuários ativos: ${activeUsers.size}")
-
                 // Adiciona uma tag para cada usuário ativo
-                for (user in activeUsers) {
+                for (user in userList.filter { it.isActive }) {
                     // Usa ViewBinding para inflar item_user_tag
                     val itemUserTagBinding = ItemUserTagBinding.inflate(layoutInflater)
 
@@ -72,12 +74,33 @@ class MainActivity : AppCompatActivity() {
                         itemUserTagBinding.imageViewUser.setImageResource(0) // Remove qualquer imagem existente
                     }
 
-                    // Adiciona a view ao layout
+                    // Configura o estado inicial do Switch com base no estado do usuário (ativo/inativo)
+                    itemUserTagBinding.userSwitch.isChecked = user.isActive
+
+                    // Listener para o Switch
+                    itemUserTagBinding.userSwitch.setOnCheckedChangeListener { _, isChecked ->
+                        CoroutineScope(Dispatchers.IO).launch {
+                            // Atualiza o status ativo do usuário no banco de dados
+                            database.userDao().updateUserActiveStatus(user.id, isChecked)
+
+                            withContext(Dispatchers.Main) {
+                                if (!isChecked) {
+                                    // Remove a tag visualmente da interface quando o usuário for desativado
+                                    binding.userTagsLayout.removeView(itemUserTagBinding.root)
+                                }
+                            }
+                        }
+                    }
+
+                    // Adiciona a view ao layout apenas para usuários ativos
                     binding.userTagsLayout.addView(itemUserTagBinding.root)
                 }
 
-                Log.d("MainActivity", "Número de tags adicionadas: ${activeUsers.size}")
+                Log.d("MainActivity", "Número de tags adicionadas: ${userList.filter { it.isActive }.size}")
             }
         }
     }
+
+
 }
+

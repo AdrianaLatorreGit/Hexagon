@@ -1,6 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/drawable/user_tag_background.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#8cd4db" />
-    <corners android:radius="8dp" />
-    <padding android:left="8dp" android:top="4dp" android:right="8dp" android:bottom="4dp" />
+    <solid android:color="#85cddb"/> <!-- Cor do post-it -->
+    <corners android:radius="8dp"/> <!-- Cantos levemente arredondados -->
+    <padding
+        android:left="8dp"
+        android:top="8dp"
+        android:right="8dp"
+        android:bottom="8dp" />
+    <stroke android:width="1dp" android:color="#CCCCCC"/>
 </shape>

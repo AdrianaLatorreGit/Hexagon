@@ -1,22 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:background="@drawable/user_tag_background"
     android:padding="8dp"
-    android:background="@drawable/user_tag_background">
+    android:layout_marginBottom="16dp"
+    android:minWidth="120dp"
+    android:minHeight="100dp"
+    >
 
+    <!-- Imagem do usuário -->
     <ImageView
         android:id="@+id/imageViewUser"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="8dp" />
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop" />
 
+    <!-- Nome ou Tag do usuário -->
     <TextView
         android:id="@+id/textViewUserTag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/ativo"
         android:textColor="@android:color/white"
         android:textSize="14sp"
-        android:padding="8dp" />
+        android:layout_gravity="center_vertical" />
+
+    <!-- Botão switch para ativar/desativar -->
+    <Switch
+        android:id="@+id/userSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:width="48dp"
+        android:height="48dp"
+        android:checked="false"
+        android:text=""
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
 </LinearLayout>
+
+
