@@ -1,7 +1,7 @@
 <!-- res/drawable/user_tag_background.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#85cddb"/> <!-- Cor do post-it -->
-    <corners android:radius="8dp"/> <!-- Cantos levemente arredondados -->
+    <solid android:color="#85cddb"/>
+    <corners android:radius="8dp"/>
     <padding
         android:left="8dp"
         android:top="8dp"

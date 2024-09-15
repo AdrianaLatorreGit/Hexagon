@@ -23,53 +23,47 @@ class AddUserActivity : AppCompatActivity() {
     }
 
     private lateinit var database: DataBase
-    private var selectedImageUri: Uri? = null // Permite valor nulo e inicializa corretamente
+    private var selectedImageUri: Uri? = null
 
-    // Launcher for the ActivityResult
     private lateinit var pickImageLauncher: ActivityResultLauncher<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        // Inicializa o banco de dados
         database = DataBase.getInstance(applicationContext)
 
-        // Inicializa o launcher para escolher a imagem
         pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let {
                 selectedImageUri = it
-                // Exibe a imagem selecionada no ImageButton
+
                 Picasso.get().load(selectedImageUri).into(binding.imageButton)
             }
         }
 
-        // Configura o botão "Salvar"
         binding.btnSave.setOnClickListener {
-            // Captura os dados do formulário
+
             val name = binding.textName.text.toString()
             val birth = binding.textBirth.text.toString()
             val cpf = binding.textCpf.text.toString()
             val city = binding.textCity.text.toString()
-            val isActive = binding.switchActive.isChecked // Captura o estado do Switch
+            val isActive = binding.switchActive.isChecked
 
-            // Verifica se todos os campos estão preenchidos
             if (name.isNotEmpty() && birth.isNotEmpty() && cpf.isNotEmpty() && city.isNotEmpty()) {
-                // Salva o usuário no banco de dados
+
                 saveUser(name, birth, cpf, city, isActive)
             } else {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show()
             }
         }
 
-        // Configura o clique do ImageButton para abrir a galeria de imagens
         binding.imageButton.setOnClickListener {
             openImageChooser()
         }
     }
 
     private fun openImageChooser() {
-        // Usa o launcher em vez de startActivityForResult
+
         pickImageLauncher.launch("image/*")
     }
 
@@ -90,9 +84,8 @@ class AddUserActivity : AppCompatActivity() {
                 if (userId > 0) {
                     Toast.makeText(this@AddUserActivity, "Usuário salvo com sucesso", Toast.LENGTH_SHORT).show()
 
-                    // Envia o resultado de sucesso para a MainActivity
                     setResult(RESULT_OK)
-                    finish() // Fecha a Activity
+                    finish()
                 } else {
                     Toast.makeText(this@AddUserActivity, "Erro ao salvar o usuário", Toast.LENGTH_SHORT).show()
                 }
